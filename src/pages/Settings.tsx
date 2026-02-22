@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useFocus } from '@/context/FocusContext';
 import { GoalWithMetrics } from '@/lib/types';
+import AllowedSitesEditor from '@/components/AllowedSitesEditor';
 
 export default function SettingsPage() {
   const { state, dispatch } = useFocus();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [expandedGoals, setExpandedGoals] = useState<Record<string, boolean>>({});
 
   const exportData = () => {
     const data = JSON.stringify({ goals: state.goals, sessions: state.sessions, skills: state.skills }, null, 2);
@@ -85,7 +88,36 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Account */}
+      {/* Allowed Sites per Goal */}
+      <div className="focus-card">
+        <div className="section-label mb-4">ALLOWED SITES</div>
+        <div className="space-y-3">
+          {state.goals.filter(g => !g.archived).map(goal => {
+            const isExpanded = expandedGoals[goal.id] ?? false;
+            return (
+              <div key={goal.id} className="border border-border rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setExpandedGoals(prev => ({ ...prev, [goal.id]: !prev[goal.id] }))}
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground hover:bg-accent/50 transition-colors"
+                >
+                  <span>{goal.name}</span>
+                  {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                </button>
+                {isExpanded && (
+                  <div className="px-4 pb-4 pt-1">
+                    <AllowedSitesEditor
+                      value={goal.allowed_sites ?? { categories: [], customSites: [] }}
+                      onChange={(allowed_sites) => dispatch({ type: 'UPDATE_GOAL', payload: { ...goal, allowed_sites } })}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="focus-card">
         <div className="section-label mb-4">ACCOUNT</div>
         <div className="space-y-3">

@@ -20,6 +20,7 @@ export const DEMO_GOALS: GoalWithMetrics[] = [
     totalEstimatedHours: 120,
     weeklyTargetHours: 10,
     archived: false,
+    allowed_sites: { categories: ['Development', 'Docs'], customSites: ['github.com', 'vercel.com'] },
   },
   {
     id: 'g2',
@@ -29,6 +30,7 @@ export const DEMO_GOALS: GoalWithMetrics[] = [
     totalEstimatedHours: 60,
     weeklyTargetHours: 6,
     archived: false,
+    allowed_sites: { categories: ['Research', 'Learning'], customSites: ['scholar.google.com'] },
   },
   {
     id: 'g3',
@@ -38,6 +40,7 @@ export const DEMO_GOALS: GoalWithMetrics[] = [
     totalEstimatedHours: 30,
     weeklyTargetHours: 3,
     archived: false,
+    allowed_sites: { categories: ['Design', 'Communication'], customSites: ['pitch.com'] },
   },
 ];
 

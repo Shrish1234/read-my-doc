@@ -6,6 +6,10 @@ export interface GoalWithMetrics {
   totalEstimatedHours: number;
   weeklyTargetHours: number;
   archived: boolean;
+  allowed_sites: {
+    categories: string[];
+    customSites: string[];
+  };
 }
 
 export interface SessionRecord {
