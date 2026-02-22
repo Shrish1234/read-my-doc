@@ -147,7 +147,7 @@ export function SessionTimerModal({ goalId: initGoalId, skillId: initSkillId, du
       const updatedSessions = [...state.sessions, session];
       const metrics = computeFullPaceMetrics(selectedGoal, updatedSessions);
       dispatch({
-        type: 'ADD_RISK_SNAPSHOT',
+        type: 'UPSERT_RISK_SNAPSHOT',
         payload: {
           id: `rs${Date.now()}`,
           goalId: selectedGoalId,
