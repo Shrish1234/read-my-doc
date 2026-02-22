@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useFocus } from '@/context/FocusContext';
-import { computeFullPaceMetrics, calculateSkillAllocations } from '@/lib/analytics';
+import { computeFullPaceMetrics } from '@/lib/analytics';
 import { TrajectoryBadge } from '@/components/TrajectoryBadge';
 import { StarRating } from '@/components/StarRating';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceArea } from 'recharts';
@@ -16,7 +16,6 @@ export default function GoalDetailPage() {
 
   const metrics = computeFullPaceMetrics(goal, state.sessions);
   const goalSkills = state.skills.filter(sk => sk.goalId === goal.id);
-  const allocations = calculateSkillAllocations(goalSkills, state.sessions, goal.id, metrics.trajectoryBand, goal.deadline);
   const goalSessions = [...state.sessions.filter(s => s.goalId === goal.id)].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
   const recentSessions = goalSessions.slice(0, 5);
 
@@ -107,38 +106,6 @@ export default function GoalDetailPage() {
         </div>
       </div>
 
-      {/* Skill Allocation */}
-      {allocations.length > 0 && (
-        <div className="focus-card">
-          <div className="section-label mb-4">SKILL ALLOCATION</div>
-          <div className="space-y-4">
-            {allocations.map(a => (
-              <div key={a.skillId}>
-                <div className="flex items-baseline justify-between text-sm">
-                  <span className="text-foreground">{a.skillName}</span>
-                  <span className="font-mono-calc text-muted-foreground">
-                    {Math.round(a.actualAllocation * 100)}% / {Math.round(a.recommendedAllocation * 100)}%
-                  </span>
-                </div>
-                <div className="relative mt-1.5 h-2 w-full overflow-hidden rounded-full bg-border">
-                  <div
-                    className={`h-full rounded-full ${a.isImbalanced ? 'bg-[#DC2626]' : 'bg-[#16A34A]'}`}
-                    style={{ width: `${Math.min(100, a.actualAllocation * 100)}%`, transition: 'width 500ms ease' }}
-                  />
-                  {/* recommended marker */}
-                  <div
-                    className="absolute top-0 h-full w-0.5 bg-foreground/40"
-                    style={{ left: `${a.recommendedAllocation * 100}%` }}
-                  />
-                </div>
-                {a.isStagnant && (
-                  <p className="mt-1 text-xs text-[#DC2626]">⚠ Stagnant — no sessions in 14 days</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Risk Trend */}
       {riskData.length > 1 && (
