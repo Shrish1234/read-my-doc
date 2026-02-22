@@ -22,7 +22,7 @@ export default function GoalsPage() {
         {goalMetrics.map(({ goal, metrics }) => {
           const daysRemaining = Math.round(metrics.remainingWeeks * 7);
           const goalSessions = state.sessions.filter(s => s.goalId === goal.id);
-          const goalSkills = state.skills.filter(sk => sk.goalId === goal.id);
+          
 
           return (
             <Link key={goal.id} to={`/goals/${goal.id}`} className="focus-card block">
@@ -59,13 +59,6 @@ export default function GoalsPage() {
                 <PaceBar current={metrics.currentWeeklyPaceHours} required={metrics.requiredWeeklyPace} target={goal.weeklyTargetHours} band={metrics.trajectoryBand} />
               </div>
 
-              {goalSkills.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {goalSkills.map(sk => (
-                    <span key={sk.id} className="rounded-full bg-accent px-2 py-0.5 text-xs text-muted-foreground">{sk.name}</span>
-                  ))}
-                </div>
-              )}
             </Link>
           );
         })}
