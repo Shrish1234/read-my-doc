@@ -1,8 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { useFocus } from '@/context/FocusContext';
 import { StarRating } from './StarRating';
-import { X } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 import { computeFullPaceMetrics } from '@/lib/analytics';
+
+const EXTENSION_ID = 'YOUR_EXTENSION_ID';
+
+const CATEGORY_SITES: Record<string, string[]> = {
+  Research: ['scholar.google.com', 'arxiv.org', 'jstor.org', 'researchgate.net', 'semanticscholar.org'],
+  Development: ['github.com', 'gitlab.com', 'stackoverflow.com', 'codepen.io', 'replit.com'],
+  Docs: ['developer.mozilla.org', 'docs.google.com', 'notion.so', 'confluence.atlassian.net', 'readthedocs.io'],
+  Design: ['figma.com', 'dribbble.com', 'behance.net', 'canva.com', 'whimsical.com'],
+  Data: ['kaggle.com', 'datasette.io', 'airtable.com', 'docs.google.com/spreadsheets'],
+  Learning: ['coursera.org', 'udemy.com', 'youtube.com', 'edx.org', 'khanacademy.org'],
+  Communication: ['slack.com', 'discord.com', 'mail.google.com', 'outlook.live.com', 'teams.microsoft.com'],
+};
+
+function resolveAllowedSites(categories: string[], customSites: string[]): string[] {
+  const sites = new Set<string>();
+  for (const cat of categories) {
+    for (const site of (CATEGORY_SITES[cat] ?? [])) {
+      sites.add(site);
+    }
+  }
+  for (const site of customSites) {
+    sites.add(site);
+  }
+  return Array.from(sites);
+}
 
 interface SessionTimerModalProps {
   goalId: string;
@@ -28,6 +53,10 @@ export function SessionTimerModal({ goalId: initGoalId, skillId: initSkillId, du
   const endTimeRef = useRef<number>(0);
   const startTimeRef = useRef<string>('');
 
+  // Focus mode
+  const [focusModeStatus, setFocusModeStatus] = useState<'active' | 'unavailable' | null>(null);
+  const [resolvedSites, setResolvedSites] = useState<string[]>([]);
+
   // Reflection
   const [movedForward, setMovedForward] = useState('');
   const [hesitation, setHesitation] = useState('');
@@ -40,10 +69,37 @@ export function SessionTimerModal({ goalId: initGoalId, skillId: initSkillId, du
 
   const startTimer = () => {
     const totalMs = duration * 60 * 1000;
-    endTimeRef.current = Date.now() + totalMs;
+    const endTime = new Date(Date.now() + totalMs);
+    endTimeRef.current = endTime.getTime();
     startTimeRef.current = new Date().toISOString();
     setSecondsRemaining(duration * 60);
     setStep('timer');
+
+    // Resolve allowed sites from goal
+    const allowed = selectedGoal?.allowed_sites ?? { categories: [], customSites: [] };
+    const sites = resolveAllowedSites(allowed.categories, allowed.customSites);
+    setResolvedSites(sites);
+
+    // Try to activate browser extension focus mode
+    try {
+      if (window.chrome?.runtime) {
+        window.chrome.runtime.sendMessage(EXTENSION_ID, {
+          type: 'FOCUS_MODE_START',
+          allowedSites: sites,
+          sessionEndsAt: endTime.toISOString(),
+        }, (response) => {
+          if (window.chrome?.runtime?.lastError) {
+            setFocusModeStatus('unavailable');
+          } else {
+            setFocusModeStatus('active');
+          }
+        });
+      } else {
+        setFocusModeStatus('unavailable');
+      }
+    } catch {
+      setFocusModeStatus('unavailable');
+    }
   };
 
   useEffect(() => {
@@ -61,6 +117,12 @@ export function SessionTimerModal({ goalId: initGoalId, skillId: initSkillId, du
 
   const endEarly = () => {
     setStep('reflection');
+  };
+
+  const sendFocusModeEnd = () => {
+    try {
+      window.chrome?.runtime?.sendMessage(EXTENSION_ID, { type: 'FOCUS_MODE_END' });
+    } catch { /* extension not available */ }
   };
 
   const saveReflection = () => {
@@ -99,6 +161,9 @@ export function SessionTimerModal({ goalId: initGoalId, skillId: initSkillId, du
         },
       });
     }
+
+    // End focus mode before closing
+    sendFocusModeEnd();
 
     onComplete();
   };
@@ -180,6 +245,40 @@ export function SessionTimerModal({ goalId: initGoalId, skillId: initSkillId, du
             <p className="mt-4 text-sm text-muted-foreground">
               {selectedGoal?.name}{selectedSkillId ? ` → ${goalSkills.find(s => s.id === selectedSkillId)?.name}` : ''}
             </p>
+
+            {/* Focus mode badge */}
+            {focusModeStatus === 'active' && (
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-3 py-1 text-xs font-medium text-green-700">
+                🔒 Focus mode active · {resolvedSites.length} sites allowed
+              </div>
+            )}
+            {focusModeStatus === 'unavailable' && (
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-medium text-amber-700">
+                ⚠ Install the FocusOS extension to block distractions
+              </div>
+            )}
+
+            {/* Allowed sites links */}
+            {resolvedSites.length > 0 && (
+              <div className="mt-5 text-left">
+                <p className="text-xs font-medium text-muted-foreground mb-2">ALLOWED SITES</p>
+                <div className="flex flex-wrap gap-2">
+                  {resolvedSites.map(site => (
+                    <a
+                      key={site}
+                      href={`https://${site}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-md border border-border bg-accent px-2 py-1 text-xs text-foreground hover:border-primary/40 transition-colors"
+                    >
+                      {site}
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <button onClick={endEarly} className="mt-8 text-sm text-muted-foreground hover:text-foreground transition-colors">
               End early
             </button>
