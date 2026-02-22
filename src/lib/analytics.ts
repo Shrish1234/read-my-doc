@@ -203,17 +203,10 @@ export function buildWeeklyReview(
     };
   });
 
-  const skillNotes: string[] = [];
   const recommendations: string[] = [];
 
   for (const g of goals.filter(g => !g.archived)) {
     const metrics = computeFullPaceMetrics(g, sessions);
-    const goalSkills = skills.filter(sk => sk.goalId === g.id);
-    const allocations = calculateSkillAllocations(goalSkills, sessions, g.id, metrics.trajectoryBand, g.deadline);
-    for (const a of allocations) {
-      if (a.isStagnant) skillNotes.push(`${a.skillName} (${g.name}) is stagnant — no sessions in 14 days.`);
-      if (a.isImbalanced) skillNotes.push(`${a.skillName} (${g.name}) allocation is off by ${Math.round(Math.abs(a.actualAllocation - a.recommendedAllocation) * 100)}%.`);
-    }
     if (metrics.trajectoryBand === 'At Risk') {
       recommendations.push(`Increase ${g.name} effort by ${metrics.paceGap.toFixed(1)} hrs/week to get back on track.`);
     }
@@ -233,8 +226,7 @@ export function buildWeeklyReview(
     memoText += ` Probability: ${Math.round(computeFullPaceMetrics(goals.find(g => g.id === gs.goalId)!, sessions).completionProbability * 100)}%.\n\n`;
   }
 
-  if (skillNotes.length > 0) memoText += `**Skill Alert:** ${skillNotes.join(' ')}\n\n`;
   if (recommendations.length > 0) memoText += `**Recommendation:** ${recommendations.join(' ')}\n`;
 
-  return { weekStart: weekStartDate.toISOString(), totalSessions, totalHours, averageFocusQuality, goalSummaries, skillNotes, recommendations, memoText };
+  return { weekStart: weekStartDate.toISOString(), totalSessions, totalHours, averageFocusQuality, goalSummaries, skillNotes: [], recommendations, memoText };
 }
