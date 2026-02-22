@@ -1,52 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 20% 5%;
-    --foreground: 240 33% 95%;
+    --background: 40 6% 97%;
+    --foreground: 24 10% 10%;
 
-    --card: 240 20% 10%;
-    --card-foreground: 240 33% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
 
-    --popover: 240 20% 10%;
-    --popover-foreground: 240 33% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
 
     --primary: 239 84% 67%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 20% 15%;
-    --secondary-foreground: 240 9% 46%;
+    --secondary: 30 6% 90%;
+    --secondary-foreground: 24 10% 10%;
 
-    --muted: 240 20% 15%;
-    --muted-foreground: 240 9% 46%;
+    --muted: 30 6% 90%;
+    --muted-foreground: 24 6% 45%;
 
-    --accent: 240 20% 15%;
-    --accent-foreground: 240 33% 95%;
+    --accent: 30 6% 94%;
+    --accent-foreground: 24 10% 10%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
+    --success: 142 72% 29%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
+    --warning: 38 92% 44%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 240 20% 15%;
-    --input: 240 20% 15%;
+    --border: 30 7% 89%;
+    --input: 30 7% 89%;
     --ring: 239 84% 67%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 240 20% 5%;
-    --sidebar-foreground: 240 33% 95%;
+    --text-muted: 24 5% 64%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 24 10% 10%;
     --sidebar-primary: 239 84% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 20% 15%;
-    --sidebar-accent-foreground: 240 33% 95%;
-    --sidebar-border: 240 20% 15%;
+    --sidebar-accent: 30 6% 94%;
+    --sidebar-accent-foreground: 24 10% 10%;
+    --sidebar-border: 30 7% 89%;
     --sidebar-ring: 239 84% 67%;
   }
 }
@@ -64,31 +68,67 @@
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 15px;
+    line-height: 1.5;
+    color: hsl(24 10% 10%);
   }
 }
 
 @layer utilities {
   .font-mono-calc {
     font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+    font-size: 14px;
   }
 
   .section-label {
-    @apply text-sm font-medium uppercase tracking-widest text-muted-foreground;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
     letter-spacing: 0.05em;
+    color: hsl(var(--text-muted));
   }
 
-  .small-label {
-    @apply font-medium uppercase;
-    font-size: 12px;
-    letter-spacing: 0.1em;
+  .page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+
+  .section-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+
+  .text-secondary-custom {
+    font-size: 14px;
+    font-weight: 400;
+    color: hsl(var(--muted-foreground));
   }
 
   .timer-digits {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 48px;
     font-weight: 400;
     font-variant-numeric: tabular-nums;
     color: hsl(var(--foreground));
+  }
+
+  .focus-card {
+    @apply bg-card rounded-xl border border-border p-6;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .focus-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 150ms ease;
   }
 
   @media (max-width: 768px) {
