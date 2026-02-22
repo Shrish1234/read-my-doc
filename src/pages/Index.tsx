@@ -1,4 +1,9 @@
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
-const Index = () => <Navigate to="/today" replace />;
+const Index = () => {
+  const { user } = useAuth();
+  return <Navigate to={user ? '/today' : '/auth'} replace />;
+};
+
 export default Index;
