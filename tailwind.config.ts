@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      maxWidth: {
+        content: "960px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -104,7 +107,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 200ms ease-out",
+        "fade-in": "fade-in 150ms ease-out",
         "slide-up": "slide-up 300ms ease-out",
         "modal-in": "modal-in 200ms ease-out",
         "toast-in": "toast-in 300ms ease-out",
