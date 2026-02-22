@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useFocus } from '@/context/FocusContext';
 import { GoalWithMetrics } from '@/lib/types';
+import { useTheme } from '@/context/ThemeContext';
 import AllowedSitesEditor from '@/components/AllowedSitesEditor';
 
 export default function SettingsPage() {
   const { state, dispatch } = useFocus();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [expandedGoals, setExpandedGoals] = useState<Record<string, boolean>>({});
+  const { theme, setTheme } = useTheme();
 
   const exportData = () => {
     const data = JSON.stringify({ goals: state.goals, sessions: state.sessions, skills: state.skills }, null, 2);
@@ -61,8 +63,26 @@ export default function SettingsPage() {
               <option value="1">Monday</option>
               <option value="0">Sunday</option>
             </select>
+          <div>
+            <label className="text-sm font-medium text-foreground">Theme</label>
+            <div className="mt-2 flex gap-2">
+              {(['light', 'dark', 'system'] as const).map(t => (
+                <button
+                  key={t}
+                  onClick={() => setTheme(t)}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    theme === t
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border border-border text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Data */}
