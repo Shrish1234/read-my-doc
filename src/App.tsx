@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FocusProvider } from "@/context/FocusContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { NavBar } from "@/components/NavBar";
 import Index from "./pages/Index";
 import TodayPage from "./pages/Today";
@@ -28,25 +29,27 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <FocusProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/today" element={<AppLayout><TodayPage /></AppLayout>} />
-            <Route path="/goals" element={<AppLayout><GoalsPage /></AppLayout>} />
-            <Route path="/goals/:id" element={<AppLayout><GoalDetailPage /></AppLayout>} />
-            <Route path="/sessions" element={<AppLayout><SessionsPage /></AppLayout>} />
-            <Route path="/patterns" element={<AppLayout><PatternsPage /></AppLayout>} />
-            <Route path="/review" element={<AppLayout><WeeklyReviewPage /></AppLayout>} />
-            <Route path="/settings" element={<AppLayout><SettingsPage /></AppLayout>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </FocusProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <BrowserRouter>
+          <FocusProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/today" element={<AppLayout><TodayPage /></AppLayout>} />
+              <Route path="/goals" element={<AppLayout><GoalsPage /></AppLayout>} />
+              <Route path="/goals/:id" element={<AppLayout><GoalDetailPage /></AppLayout>} />
+              <Route path="/sessions" element={<AppLayout><SessionsPage /></AppLayout>} />
+              <Route path="/patterns" element={<AppLayout><PatternsPage /></AppLayout>} />
+              <Route path="/review" element={<AppLayout><WeeklyReviewPage /></AppLayout>} />
+              <Route path="/settings" element={<AppLayout><SettingsPage /></AppLayout>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </FocusProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

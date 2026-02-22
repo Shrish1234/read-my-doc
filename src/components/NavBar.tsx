@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Settings } from 'lucide-react';
+import { Settings, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 
 const NAV_ITEMS = [
   { to: '/today', label: 'Today' },
@@ -11,6 +12,7 @@ const NAV_ITEMS = [
 
 export function NavBar() {
   const location = useLocation();
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card" style={{ height: 56 }}>
@@ -44,7 +46,14 @@ export function NavBar() {
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md"
+            aria-label="Toggle dark mode"
+          >
+            {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
             <Settings size={20} />
           </NavLink>
