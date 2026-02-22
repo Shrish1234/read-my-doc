@@ -30,24 +30,17 @@ export default function TodayPage() {
 
   const lastSessionGoal = lastSession ? state.goals.find(g => g.id === lastSession.goalId) : null;
 
-  // Strategic memo
-  const memoText = useMemo(() => {
-    if (activeGoals.length === 0) return null;
-    const parts: string[] = [];
-    parts.push(`You have ${activeGoals.length} active goal${activeGoals.length > 1 ? 's' : ''}.`);
-    for (const { goal, metrics } of goalMetrics) {
-      const days = Math.round(metrics.remainingWeeks * 7);
-      if (metrics.paceGap > 0) {
-        parts.push(`${goal.name} is ${metrics.trajectoryBand} — you're ${metrics.paceGap.toFixed(1)} hours behind pace with ${days} days until deadline.`);
-      } else {
-        parts.push(`${goal.name} is on pace (${metrics.trajectoryBand}).`);
-      }
-    }
-    if (suggestion) {
-      parts.push(`\nFocus suggestion: ${suggestion.suggestedDurationMinutes} min on ${suggestion.goalName}${suggestion.skillName ? ` → ${suggestion.skillName}` : ''}.`);
-    }
-    return parts.join(' ');
-  }, [activeGoals, goalMetrics, suggestion]);
+  // Strategic memo — find most urgent goal
+  const urgentGoalData = useMemo(() => {
+    if (goalMetrics.length === 0) return null;
+    const sorted = [...goalMetrics].sort((a, b) => b.metrics.paceGap - a.metrics.paceGap);
+    const { goal, metrics } = sorted[0];
+    const days = Math.round(metrics.remainingWeeks * 7);
+    const focusLine = suggestion
+      ? `Focus ${suggestion.suggestedDurationMinutes} min on ${suggestion.goalName}${suggestion.skillName ? ` → ${suggestion.skillName}` : ''}`
+      : `Stay on track with ${goal.name}`;
+    return { goal, metrics, days, focusLine };
+  }, [goalMetrics, suggestion]);
 
   if (activeGoals.length === 0) {
     return (
@@ -64,11 +57,31 @@ export default function TodayPage() {
     <div className="animate-fade-in mx-auto max-w-content px-8 py-8 space-y-8">
       <h1 className="page-title">Today</h1>
 
-      {/* Strategic Memo */}
-      {memoText && (
+      {/* Strategic Memo — Cockpit Card */}
+      {urgentGoalData && (
         <div className="focus-card">
           <div className="section-label mb-3">STRATEGIC MEMO</div>
-          <p className="text-sm leading-relaxed text-foreground whitespace-pre-line">{memoText}</p>
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-semibold text-foreground leading-tight">{urgentGoalData.goal.name}</h2>
+            <TrajectoryBadge band={urgentGoalData.metrics.trajectoryBand} />
+          </div>
+          <div className="mt-4 flex gap-4">
+            <div className="flex-1 rounded-lg bg-accent px-3 py-2">
+              <span className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">Pace Gap</span>
+              <span className="block text-base font-bold text-foreground mt-0.5 font-mono-calc">
+                {urgentGoalData.metrics.paceGap > 0 ? `−${urgentGoalData.metrics.paceGap.toFixed(1)} hrs` : 'On pace'}
+              </span>
+            </div>
+            <div className="flex-1 rounded-lg bg-accent px-3 py-2">
+              <span className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">Days Left</span>
+              <span className="block text-base font-bold text-foreground mt-0.5 font-mono-calc">{urgentGoalData.days}</span>
+            </div>
+            <div className="flex-1 rounded-lg bg-accent px-3 py-2">
+              <span className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">Probability</span>
+              <span className="block text-base font-bold text-foreground mt-0.5 font-mono-calc">{Math.round(urgentGoalData.metrics.completionProbability * 100)}%</span>
+            </div>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground truncate">{urgentGoalData.focusLine}</p>
         </div>
       )}
 

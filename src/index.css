@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 40 6% 97%;
+    --background: 210 40% 98%;
     --foreground: 24 10% 10%;
 
     --card: 0 0% 100%;
@@ -18,13 +18,13 @@
     --primary: 239 84% 67%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 6% 90%;
+    --secondary: 214 32% 91%;
     --secondary-foreground: 24 10% 10%;
 
-    --muted: 30 6% 90%;
+    --muted: 214 32% 91%;
     --muted-foreground: 24 6% 45%;
 
-    --accent: 30 6% 94%;
+    --accent: 210 40% 96%;
     --accent-foreground: 24 10% 10%;
 
     --destructive: 0 72% 51%;
@@ -36,21 +36,21 @@
     --warning: 38 92% 44%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 30 7% 89%;
-    --input: 30 7% 89%;
+    --border: 213 27% 84%;
+    --input: 213 27% 84%;
     --ring: 239 84% 67%;
 
     --radius: 0.75rem;
 
-    --text-muted: 24 5% 64%;
+    --text-muted: 30 7% 65%;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 24 10% 10%;
     --sidebar-primary: 239 84% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 6% 94%;
+    --sidebar-accent: 210 40% 96%;
     --sidebar-accent-foreground: 24 10% 10%;
-    --sidebar-border: 30 7% 89%;
+    --sidebar-border: 213 27% 84%;
     --sidebar-ring: 239 84% 67%;
   }
 }
@@ -122,12 +122,12 @@
 
   .focus-card {
     @apply bg-card rounded-xl border border-border p-6;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
 
   .focus-card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(99,102,241,0.04);
     transition: all 150ms ease;
   }
 
