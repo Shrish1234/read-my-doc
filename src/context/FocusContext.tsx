@@ -15,6 +15,7 @@ type Action =
   | { type: 'ADD_SESSION'; payload: SessionRecord }
   | { type: 'SET_SKILLS'; payload: SkillRecord[] }
   | { type: 'ADD_RISK_SNAPSHOT'; payload: RiskSnapshot }
+  | { type: 'UPSERT_RISK_SNAPSHOT'; payload: RiskSnapshot }
   | { type: 'SET_RISK_SNAPSHOTS'; payload: RiskSnapshot[] }
   | { type: 'UPDATE_GOAL'; payload: GoalWithMetrics }
   | { type: 'LOAD_STATE'; payload: Partial<AppState> }
@@ -34,6 +35,16 @@ function reducer(state: AppState, action: Action): AppState {
     case 'ADD_SESSION': return { ...state, sessions: [...state.sessions, action.payload] };
     case 'SET_SKILLS': return { ...state, skills: action.payload };
     case 'ADD_RISK_SNAPSHOT': return { ...state, riskSnapshots: [...state.riskSnapshots, action.payload] };
+    case 'UPSERT_RISK_SNAPSHOT': {
+      const p = action.payload;
+      const idx = state.riskSnapshots.findIndex(rs => rs.goalId === p.goalId && rs.date === p.date);
+      if (idx >= 0) {
+        const updated = [...state.riskSnapshots];
+        updated[idx] = p;
+        return { ...state, riskSnapshots: updated };
+      }
+      return { ...state, riskSnapshots: [...state.riskSnapshots, p] };
+    }
     case 'SET_RISK_SNAPSHOTS': return { ...state, riskSnapshots: action.payload };
     case 'UPDATE_GOAL': return { ...state, goals: state.goals.map(g => g.id === action.payload.id ? action.payload : g) };
     case 'LOAD_STATE': return { ...state, ...action.payload };
