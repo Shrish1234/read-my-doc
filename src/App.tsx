@@ -5,11 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FocusProvider } from "@/context/FocusContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { AuthProvider } from "@/context/AuthContext";
 import { NavBar } from "@/components/NavBar";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
-import AuthPage from "./pages/Auth";
 import TodayPage from "./pages/Today";
 import GoalsPage from "./pages/Goals";
 import GoalDetailPage from "./pages/GoalDetail";
@@ -33,28 +30,25 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <AuthProvider>
-        <TooltipProvider>
-          <BrowserRouter>
-            <FocusProvider>
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/today" element={<ProtectedRoute><AppLayout><TodayPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/goals" element={<ProtectedRoute><AppLayout><GoalsPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/goals/:id" element={<ProtectedRoute><AppLayout><GoalDetailPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/sessions" element={<ProtectedRoute><AppLayout><SessionsPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/patterns" element={<ProtectedRoute><AppLayout><PatternsPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/review" element={<ProtectedRoute><AppLayout><WeeklyReviewPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><AppLayout><SettingsPage /></AppLayout></ProtectedRoute>} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </FocusProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+      <TooltipProvider>
+        <BrowserRouter>
+          <FocusProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/today" element={<AppLayout><TodayPage /></AppLayout>} />
+              <Route path="/goals" element={<AppLayout><GoalsPage /></AppLayout>} />
+              <Route path="/goals/:id" element={<AppLayout><GoalDetailPage /></AppLayout>} />
+              <Route path="/sessions" element={<AppLayout><SessionsPage /></AppLayout>} />
+              <Route path="/patterns" element={<AppLayout><PatternsPage /></AppLayout>} />
+              <Route path="/review" element={<AppLayout><WeeklyReviewPage /></AppLayout>} />
+              <Route path="/settings" element={<AppLayout><SettingsPage /></AppLayout>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </FocusProvider>
+        </BrowserRouter>
+      </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
