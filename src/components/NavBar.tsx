@@ -1,7 +1,6 @@
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Settings, Moon, Sun, LogOut } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Settings, Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
-import { useAuth } from '@/context/AuthContext';
 
 const NAV_ITEMS = [
   { to: '/today', label: 'Today' },
@@ -12,15 +11,7 @@ const NAV_ITEMS = [
 ];
 
 export function NavBar() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const { resolvedTheme, setTheme } = useTheme();
-  const { user, logout } = useAuth();
-
-  const handleSignOut = () => {
-    logout();
-    navigate('/auth');
-  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card" style={{ height: 56 }}>
@@ -65,18 +56,6 @@ export function NavBar() {
           <NavLink to="/settings" className="text-muted-foreground hover:text-foreground transition-colors">
             <Settings size={20} />
           </NavLink>
-          {user && (
-            <>
-              <span className="text-sm text-muted-foreground hidden sm:inline">{user.name}</span>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Sign out"
-              >
-                <LogOut size={16} />
-              </button>
-            </>
-          )}
         </div>
       </div>
     </header>
